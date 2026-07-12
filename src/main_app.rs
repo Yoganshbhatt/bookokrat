@@ -701,22 +701,16 @@ impl App {
             (book_manager, startup_caps)
         };
         #[cfg(not(feature = "pdf"))]
-        let startup_caps = crate::terminal::TerminalCapabilities {
-            env: crate::terminal::TerminalEnv::read(),
-            kind: crate::terminal::TerminalKind::Unknown,
-            protocol: None,
-            supports_graphics: false,
-            supports_true_color: true,
-            supports_underline_color: true,
-            pdf: crate::terminal::PdfCapabilities {
-                supported: false,
-                blocked_reason: Some("PDF feature disabled".into()),
-                supports_comments: false,
-                supports_scroll_mode: false,
-                supports_normal_mode: false,
-                supports_kitty_shm: None,
-                supports_kitty_delete_range: None,
-            },
+        let startup_caps = {
+            let mut caps = crate::terminal::detect_terminal();
+            caps.pdf.supported = false;
+            caps.pdf.blocked_reason = Some("PDF feature disabled".into());
+            caps.pdf.supports_comments = false;
+            caps.pdf.supports_scroll_mode = false;
+            caps.pdf.supports_normal_mode = false;
+            caps.pdf.supports_kitty_shm = None;
+            caps.pdf.supports_kitty_delete_range = None;
+            caps
         };
 
         let navigation_panel = NavigationPanel::new(&book_manager);
