@@ -700,6 +700,24 @@ impl App {
             book_manager.supports_graphics = startup_caps.supports_graphics;
             (book_manager, startup_caps)
         };
+        #[cfg(not(feature = "pdf"))]
+        let startup_caps = crate::terminal::TerminalCapabilities {
+            env: crate::terminal::TerminalEnv::read(),
+            kind: crate::terminal::TerminalKind::Unknown,
+            protocol: None,
+            supports_graphics: false,
+            supports_true_color: true,
+            supports_underline_color: true,
+            pdf: crate::terminal::PdfCapabilities {
+                supported: false,
+                blocked_reason: Some("PDF feature disabled".into()),
+                supports_comments: false,
+                supports_scroll_mode: false,
+                supports_normal_mode: false,
+                supports_kitty_shm: None,
+                supports_kitty_delete_range: None,
+            },
+        };
 
         let navigation_panel = NavigationPanel::new(&book_manager);
         #[cfg(any(test, feature = "test-utils"))]
